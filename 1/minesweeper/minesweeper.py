@@ -108,27 +108,42 @@ class Sentence():
         """
         Returns the set of all cells in self.cells known to be mines.
         """
-        raise NotImplementedError
+        mine_cells = set()
+        if self.count == len(self.cells):
+            for e in self.cells:
+                mine_cells.add(e)
+
+        return mine_cells
+        
 
     def known_safes(self):
         """
         Returns the set of all cells in self.cells known to be safe.
         """
-        raise NotImplementedError
+        safe_cells = set()
+        if self.count == 0:
+            for e in self.cells:
+                safe_cells.add(e)
 
-    def mark_mine(self, cell):
+        return safe_cells
+
+    def mark_mine(self, cell): # s.mark_mine((1, 2))
         """
         Updates internal knowledge representation given the fact that
         a cell is known to be a mine.
         """
-        raise NotImplementedError
+        if cell in self.cells:
+            self.cells.remove(cell)
+            self.count -= 1
+
 
     def mark_safe(self, cell):
         """
         Updates internal knowledge representation given the fact that
         a cell is known to be safe.
         """
-        raise NotImplementedError
+        if cell in self.cells:
+            self.cells.remove(cell)
 
 
 class MinesweeperAI():
@@ -170,7 +185,7 @@ class MinesweeperAI():
         for sentence in self.knowledge:
             sentence.mark_safe(cell)
 
-    def add_knowledge(self, cell, count):
+    def add_knowledge(self, cell, count): # msAI.addknowledge((1, 2), 4)
         """
         Called when the Minesweeper board tells us, for a given
         safe cell, how many neighboring cells have mines in them.
@@ -185,7 +200,41 @@ class MinesweeperAI():
             5) add any new sentences to the AI's knowledge base
                if they can be inferred from existing knowledge
         """
-        raise NotImplementedError
+        # 1  
+        self.moves_made.add(cell)
+        # 2
+        self.mark_safe(cell)
+        # 3
+        dis = [-1, 0, 1]
+        djs = [-1, 0, 1]
+        cells = [ (cell[0] + di, cell[1] + dj) for di in dis for dj in djs if (di!= 0 or dj!= 0) and cell[0] + di >= 0 and cell[0] + di < self.height and cell[1] + dj  >= 0 and cell[1] + dj < self.width]
+        sentence = Sentence(cells, count)
+        self.knowledge.add(sentence)
+        
+        #4 
+        new_safes = set()
+        new_mines = set()
+        for sentence in self.knowledge:
+            new_safes.update(sentence.known_mines())
+            new_mines.update(sentence.known_safes())
+        for safe in new_safes:
+            self.mark_safe(safe)
+        for mine in new_mines:
+            self.mark_mine(mine)
+
+       
+
+        #5
+        knowledge = list(self.knowledge)
+        for i in range(len(knowledge) - 1):
+            for j in range(i + 1, len(knowledge)):
+                if knowledge[i].cells.issubset(knowledge[j].cells) and knowledge[i] != knowledge[j]:
+                    new_cells = knowledge[j].cells - knowledge[i].cells
+                    new_count = knowledge[j].count - knowledge[i].count
+                    new_sentence = Sentence(new_cells, new_count)
+                    self.knowledge.add(new_sentence)
+
+            
 
     def make_safe_move(self):
         """
@@ -196,7 +245,12 @@ class MinesweeperAI():
         This function may use the knowledge in self.mines, self.safes
         and self.moves_made, but should not modify any of those values.
         """
-        raise NotImplementedError
+        for safe in self.safes:
+            if safe not in self.moves_made:
+                return safe
+        return None
+
+        
 
     def make_random_move(self):
         """
@@ -205,4 +259,9 @@ class MinesweeperAI():
             1) have not already been chosen, and
             2) are not known to be mines
         """
-        raise NotImplementedError
+        choices = []
+        for i in range(self.height):
+            for j in range(self.width):
+                if (i, j) not in self.moves_made and (i, j) not in self.mines:
+                    choices.append((i, j))
+        return choices[random.randint(0, len(choices) - 1)]
