@@ -1,0 +1,16 @@
+Q1.Prune
+[8:20 PM, 3/10/2020] Utkarsh It: Prune ke liye basically permutation banane ane chahiye itertools se python me
+[8:20 PM, 3/10/2020] Utkarsh It: Baki sab bht simple tha
+[8:20 PM, 3/10/2020] Utkarsh It: Array traversal ke liye 3 mark tha
+
+Q2. Frequently data set nd candidate key generator function
+
+
+GFG
+https://github.com/MrPatel95/Apriori-Algorithm/blob/master/AprioriAlgorithm.py
+
+https://github.com/Ethonwu/Apriori-Python/blob/master/Apriori.py
+
+https://github.com/chinmay-n/DMPA-Lab
+
+https://github.com/itsnavneetk/sem6/tree/master/DWDM
