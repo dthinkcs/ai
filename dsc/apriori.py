@@ -1,4 +1,6 @@
 
+from itertools import chain, combinations
+
 def loadDataSet():
     return [[1, 3, 4], [2, 3, 5], [1, 2, 3, 5], [2, 5]]
 
@@ -45,6 +47,18 @@ L1, suppDat0 = scanD(D, C1, 0.5)
 print(L1)
 print(suppDat0)
 
+def has_infrequent_subset(c, Lk):
+    subsets = get_subsets(c)
+    for s in subsets:
+        if s not in Lk:
+            return True
+    return False
+
+
+def get_subsets(itemset):
+    return chain(*[combinations(itemset, i + 1) for i, a in enumerate(itemset)])
+
+
 # apriori -> aprioriGen to create Ck + 1
 def aprioriGen(Lk, k): # create Ck+1
     retList = []
@@ -55,8 +69,10 @@ def aprioriGen(Lk, k): # create Ck+1
             L1.sort()
             L2.sort()
             c  = Lk[i] | Lk[j]
+
             if L1 == L2: # first k - 2 elements are
-                retList.append(c)
+                if not has_infrequent_subset(c, Lk):
+                    retList.append(c)
     return retList
 
 def apriori(dataSet, minSupport = 0.5):
@@ -108,7 +124,11 @@ def rulesFromConseq(freqSet, H, supportData, brl, minConf=0.7):
 L,suppData= apriori(dataSet,minSupport=0.5)
 rules= generateRules(L,suppData, minConf=0.7)
 
-rules= generateRules(L,suppData, minConf=0.7)
+mushDatSet = [line.strip().split(',') for line in open('mushrooms.csv').readlines()]
 
-def prune():
-    # TODO
+L,suppData= apriori(mushDatSet, minSupport=0.3)
+print(L)
+
+rules = generateRules(L, suppData, minConf=0.5)
+print(rules)
+
