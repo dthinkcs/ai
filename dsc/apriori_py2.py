@@ -50,8 +50,9 @@ def apriori(data, min_support, min_confidence):
     # Get first itemset and transactions
     itemset, transaction_list = itemset_from_data(data)
     
-    print(itemset)
-    #print(transaction_list)
+    #print(len(itemset))
+    #for i in range(10):
+    #   print(i, transaction_list[i])
     
     # Get the frequent itemset
     f_itemset = freq_itemset(transaction_list, itemset, min_support)
