@@ -1,16 +1,20 @@
 
 from itertools import chain, combinations
 
+seen = set()  # set of alls seen frozensets
+
 def loadDataSet():
     return [[1, 3, 4], [2, 3, 5], [1, 2, 3, 5], [2, 5]]
 
-def createC1(transactions):
+def createC1(transactions): # dataset [[1,2], [2,4]] 
     C1 = []
     for transaction in transactions:
         for item in transaction:
             if not [item] in C1:
                 C1.append([item])
+                seen.add(frozenset([item]))
     C1.sort()
+
     return list(map(frozenset, C1)) # key in dict
 
 #print(createC1(loadDataSet())) # c1
@@ -47,10 +51,18 @@ L1, suppDat0 = scanD(D, C1, 0.5)
 print(L1)
 print(suppDat0)
 
-def has_infrequent_subset(c, Lk):
-    subsets = get_subsets(c)
+def has_infrequent_subset(c, k):
+    #return False
+    subsets = get_subsets(c) # 2
+    # if c == frozenset({'n', 'e', 'f'}):
+    #     for s in subsets:
+    #         print(len(s))
+    #         print(k)
+    #         print(frozenset(s))
+    #         print(frozenset(s) not in seen)
+    
     for s in subsets:
-        if s not in Lk:
+        if len(s) != k and frozenset(s) not in seen:
             return True
     return False
 
@@ -71,8 +83,11 @@ def aprioriGen(Lk, k): # create Ck+1
             c  = Lk[i] | Lk[j]
 
             if L1 == L2: # first k - 2 elements are
-                if not has_infrequent_subset(c, Lk):
+                print(c)
+                
+                if not has_infrequent_subset(c, k): # seen 
                     retList.append(c)
+                    seen.add(c)
     return retList
 
 def apriori(dataSet, minSupport = 0.5):
@@ -89,8 +104,8 @@ def apriori(dataSet, minSupport = 0.5):
         k += 1
     return L, supportData
 
-L, suppData = apriori(dataSet)
-print(L)
+#L, suppData = apriori(dataSet)
+#print(L)
 
 def generateRules(L, supportData, minConf=0.7):  #supportData is a dict coming from scanD
     bigRuleList = []
