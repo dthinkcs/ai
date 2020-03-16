@@ -42,5 +42,34 @@ def cross(A, B):
     return set( (a, b) for a in A  for b in B )
 
 
+# A <= B True if forall a in A a also in B 
+def is_subset(A, B):
+
+    for a in A:
+        if a not in B:
+            return False
+    return True
+
+
+# A >= B
+def is_superset(A, B):
+    return is_subset(B, A)
+
+
+# A < B
+def is_proper_subset(A, B):
+    return is_subset(A, B) and A != B
+
+
+# A > B
+def is_proper_superset(A, B):
+    return is_superset(A, B) and A != B
+
+
+# set S is a relation if it is a subset of A X B
+def is_relation(S, A, B):
+    return is_subset(S, cross(A, B))
+
+
 
 
